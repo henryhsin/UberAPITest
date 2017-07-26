@@ -60,6 +60,7 @@
                     <string>http://localhost/</string>
                     </dict>
                 </array>
-            
+            <key>UberServerToken</key>
+            <string>cYrcJRSBKH2X-gOx6RBWQV6wn6eqGtl9bEiTUNpV</string>
 </dict>
 </plist>

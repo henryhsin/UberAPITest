@@ -9,20 +9,27 @@
 import UIKit
 import UberRides
 import CoreLocation
-class ViewController: UIViewController {
-    
+class ViewController: UIViewController{
+    let ridesClient = RidesClient()
+    let button = RideRequestButton()
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        let button = RideRequestButton()
+        let pickupLoaction = CLLocation(latitude: 25.021918, longitude: 121.535285)
+        let dropoffLocation = CLLocation(latitude: 25.042119, longitude: 121.50668)
+        var builder = RideParametersBuilder().setPickupLocation(pickupLoaction).setDropoffLocation(dropoffLocation, nickname: "西門紅樓")
+        ridesClient.fetchCheapestProduct(pickupLocation: pickupLoaction) { (product, response) in
+            if let productID = product?.productID{
+                builder = builder.setProductID(productID)
+                self.button.rideParameters = builder.build()
+                // show estimate
+                self.button.loadRideInformation()
+            }
+        }
         button.center = view.center
-//        button.colorStyle = .white
-        button.imageView?.image = UIImage(named: "taxi")
-        let dropoffLocation = CLLocation(latitude: 37.6213129, longitude: -122.3789554)
-        let builder = RideParametersBuilder().setDropoffLocation(dropoffLocation, nickname: "Awesome Airport")
-        button.rideParameters = builder.build()
-        
+        button.colorStyle = .black
         view.addSubview(button)
+        button.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
@@ -30,6 +37,31 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+//    func rideRequestButton(_ button: RideRequestButton, didReceiveError error: RidesError) {
+//        
+//    }
+//    
+//    func rideRequestButtonDidLoadRideInformation(_ button: RideRequestButton) {
+//        button.sizeToFit()
+//        button.center = view.center
+//    }
 
+}
+
+extension ViewController: RideRequestButtonDelegate{
+    /**
+     The button encountered an error when refreshing its metadata content.
+     
+     - parameter button: the RideRequestButton
+     - parameter error:  the error that it encountered
+     */
+    func rideRequestButton(_ button: RideRequestButton, didReceiveError error: RidesError) {
+        
+    }
+
+    func rideRequestButtonDidLoadRideInformation(_ button: RideRequestButton) {
+        button.sizeToFit()
+        button.center = view.center
+    }
 }
 
